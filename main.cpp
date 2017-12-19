@@ -15,6 +15,7 @@ private:
 	string course[10];
 	char grade[10];
 public:
+	void setRoll		( int roll ) {	rollnum = roll;	}
 	void writeData		();
 	void readData		();
 	void add			( int rolln );
@@ -24,12 +25,14 @@ public:
 	void setDateOfBirth	();
 	void setAddress		();
 	void setCourses		();
-	void remove 		();
+	void removeit 		();
 } stud[500];
 
 void menu();
 void roll();
-//void displayByName ( string name[] );
+void displayByName ( string name[] );
+
+
 
 int main()
 {
@@ -75,7 +78,7 @@ void menu()
 			string name[2];
 			cout<<"Enter first name:\t\t"; cin>>name[0];
 			cout<<"Enter last name:\t\t"; cin>>name[1];
-			//displayByName( name );
+			displayByName( name );
 		} else 
 		if ( searchtemp == 2 )
 		{
@@ -91,29 +94,29 @@ void menu()
 
 void roll()
 {
-	int rollnum;
+	int rollnumber;
 	ifstream roll("roll.txt");
 	if (roll)
 	{
 		ifstream roll ("roll.txt");
-		while( roll>>rollnum )
+		while( roll>>rollnumber )
 		{
-			rollnum++;
+			rollnumber++;
 			ofstream roll;
 			roll.open ("roll.txt");
-			roll<<rollnum;
+			roll<<rollnumber;
 		}
 		roll.close();
-		stud[rollnum].add(rollnum);
+		stud[ rollnumber ].add( rollnumber );
 
 	} else
 	{
 		ofstream roll;
 		roll.open ("roll.txt");
-		rollnum=1;
-		roll <<rollnum;
+		rollnumber=1;
+		roll << rollnumber;
 		roll.close();
-		stud[rollnum].add(rollnum);
+		stud[ rollnumber ].add( rollnumber );
 	}
 }
 
@@ -122,15 +125,17 @@ void roll()
 void student::writeData()
 {
 	system("CLS");
-	cout<<"Making a file for roll number "<<rollnum<<endl;
+	cout<<"Making a file for roll number "<<rollnum<<endl;;
 
-	//Making a file and writing to it.
+	// Important to create .txt file.
 	string rolli;
 	stringstream convert;
 	convert << rollnum;
 	rolli = convert.str();
-    rolli += ".txt"; // important to create .txt file.
-    ofstream database;
+    rolli += ".txt"; 
+    
+	// Making a file and writing to it.
+	ofstream database;
     database.open(rolli.c_str());
 
 	int temp2;
@@ -263,6 +268,8 @@ void student::setCourses()
 void student::add( int rolln )
 {
 	system("CLS");
+	rollnum = rolln;
+	
 	cout<<"Adding a new Student with roll number: "<<rollnum<<endl;
 	cout<<"Please enter the following data about the student: "<<endl<<endl;
 
@@ -271,9 +278,7 @@ void student::add( int rolln )
 	setAddress();
 	setCourses();
 	
-	rollnum = rolln;
-	writeData();
-
+	writeData ();
 }
 
 
@@ -316,6 +321,47 @@ void student::edit()
 
 
 
+void displayByName( string name[] )
+{
+	int rollnum1;
+	string nametemp[2];
+	ifstream database ("roll.txt");
+	if (database)
+	{
+		while (database>>rollnum1)
+		{
+			for (int i=1; i<=rollnum1; i++)
+			{
+				string rolli;
+				stringstream convert;
+				convert << i;
+				rolli = convert.str();
+			    rolli += ".txt"; // important to create .txt file.
+				ifstream nameo (rolli.c_str());
+				if (nameo)
+				{
+					while (nameo>>nametemp[0]>>nametemp[1])
+					{
+						if(name[0]==nametemp[0] && name[1]==nametemp[1])
+						{
+							//readData();
+							stud[i].displayByRoll();
+						} else
+						{
+							cout<<"Error: File not found / Unable to open file."<<endl;
+						}
+					}
+				} else
+				{
+					cout<<"Error: File not found / Unable to open file."<<endl;
+				}
+			}
+		}
+	}
+}
+
+
+
 void student::displayByRoll()
 {
 	loop:
@@ -348,7 +394,7 @@ void student::displayByRoll()
 		cout<<"New data:"<<endl<<endl; goto loop;
 		break;
 	case 2:
-		remove();
+		removeit();
 		cout<<endl<<endl;
 		break;
 	case 3:
@@ -358,7 +404,7 @@ void student::displayByRoll()
 
 
 
-void student::remove()
+void student::removeit()
 {
 	string rollnumber;
 	stringstream convert;
@@ -373,18 +419,18 @@ void student::remove()
 	{
 		while( database>>name[0]>>name[1] )
 		database.close();
-		cout<<"Do you wish to delete the file of "<<name[0]<<" "<<name[1]<<"? (Y/N)"<<endl;
+		cout<<endl<<"Do you wish to delete the file of "<<name[0]<<" "<<name[1]<<"? (Y/N)"<<endl;
 		char temp; cin>>temp;
 		if (temp=='y'||temp=='Y')
 		{
 			remove(rollnumber.c_str()); //Deletes the file.
-			cout<<"Student's file has been deleted."<<endl;
+			cout<<endl<<"Student's file has been deleted."<<endl;
 		} else
 		{
-			cout<<"The file has not been deleted."<<endl;
+			cout<<endl<<"The file has not been deleted."<<endl;
 		}
 	} else
 	{
-		cout<<"Error: File not found / Unable to access file."<<endl;
+		cout<<endl<<"Error: File not found / Unable to access file."<<endl;
 	}
 }
