@@ -15,9 +15,8 @@ private:
 	string course[10];
 	char grade[10];
 public:
-	void setRoll		( int roll ) {	rollnum = roll;	}
 	void writeData		();
-	void readData		();
+	bool readData		();
 	void add			( int rolln );
 	void displayByRoll	();
 	void edit			();
@@ -26,7 +25,10 @@ public:
 	void setAddress		();
 	void setCourses		();
 	void removeit 		();
+	
 } stud[500];
+
+
 
 void menu();
 void roll();
@@ -34,6 +36,8 @@ void displayByName ( string name[] );
 
 
 
+
+/*******************************************************************************************************************************************************/
 int main()
 {
 	cout<<"Welcome to Student Management System."<<endl;
@@ -52,9 +56,13 @@ int main()
 	cout<<"Exiting.";
 	return 0;
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// THE MAIN MENU
+/*******************************************************************************************************************************************************/
 void menu()
 {
 	//Main menu.
@@ -89,9 +97,13 @@ void menu()
 	break;
 	}
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// ROLL NUMBER GENERATOR
+/*******************************************************************************************************************************************************/
 void roll()
 {
 	int rollnumber;
@@ -119,9 +131,13 @@ void roll()
 		stud[ rollnumber ].add( rollnumber );
 	}
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// READ / WRITE DATA
+/*******************************************************************************************************************************************************/
 void student::writeData()
 {
 	system("CLS");
@@ -152,7 +168,8 @@ void student::writeData()
 }
 
 
-void student::readData()
+
+bool student::readData()
 {
 	system("CLS");
 	cout<<"Reading file of roll number:\t"<<rollnum<<endl<<endl;
@@ -173,15 +190,21 @@ void student::readData()
 				>>course[6]>>grade[6]>>course[7]>>grade[7]
 				>>course[8]>>grade[8]>>course[9]>>grade[9] )
 		database.close();
+		cout<<endl<<endl;
+		return true;
 	} else
 	{
-		cout<<"Error: File not found / Unable to open file."<<endl;
+		cout<<"Error: File not found / Unable to open file."<<endl<<endl<<endl;
+		return false;
 	}
-	cout<<endl<<endl;
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// SET-VALUE FUNCTIONS
+/*******************************************************************************************************************************************************/
 void student::setName()
 {
 	
@@ -196,21 +219,20 @@ void student::setName()
 
 void student::setDateOfBirth()
 {
-	int dob[3];
+	int dob[3] = { 0, 0, 0 };
 	cout<<endl<<"Date of birth"<<endl<<endl;
-	dateofbirth: //Program will be redirected here to re-enter values through goto.
-	cout<<"Day:\t\t";		cin>>dob[0];
-	cout<<"Month:\t\t";		cin>>dob[1];
-	cout<<"Year:\t\t";		cin>>dob[2];
-	
-	dateOfBirth[0] = dob [0]; dateOfBirth[1] = dob [1]; dateOfBirth[2] = dob [2];
+	cout<<"Day:\t\t";		cin>>dob[0];	dateOfBirth[0] = dob [0];
+	cout<<"Month:\t\t";		cin>>dob[1];	dateOfBirth[1] = dob [1];
+	cout<<"Year:\t\t";		cin>>dob[2];	dateOfBirth[2] = dob [2];
 	cout<<endl;
 
 	if ( dob[0]<1 || dob[0]>31 || dob[1]<1 || dob[1]>12 || dob[2]<1 )
 	{
 		cout<<"Please enter valid values."<<endl;
-		goto dateofbirth; //Will redirect to "dateofbirth" label.
+		stud[rollnum].setDateOfBirth();
 	}
+	
+
 	//Age.
 	age=(2017*12-((dob[2]*12)+dob[1]))/12; //Only accurate for months.
 }
@@ -228,8 +250,9 @@ void student::setAddress()
 
 void student::setCourses()
 {
-	Course: //Program will be redirected here to re-enter values through goto.
-	cout<<endl<<"Enter number of courses (maximum 10):\t"; int coursnum; cin>>coursnum; cout<<endl; coursenum = coursnum;
+	
+	cout<<endl<<"Enter number of courses (maximum 10):\t"; int coursnum; cin>>coursnum; cout<<endl; 
+	coursenum = coursnum;
 	string cours[coursnum];
 	int marks[coursnum];
 	if ( coursnum <= 10 && coursnum > 0 )
@@ -256,15 +279,19 @@ void student::setCourses()
 				grade [temp1] = 'F';
 			}
 		}
-	} else
+	}  else
 	{
 		cout<<"Number of courses must be equal to or less than 10 and greater than 0."<<endl;
-		goto Course; //Will redirect to "Course" label.
+		stud[rollnum].setCourses();
 	}
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// ADDING A NEW STUDENT
+/*******************************************************************************************************************************************************/
 void student::add( int rolln )
 {
 	system("CLS");
@@ -280,8 +307,13 @@ void student::add( int rolln )
 	
 	writeData ();
 }
+/*******************************************************************************************************************************************************/
 
 
+
+
+// EDITING DATA OF A STUDENT
+/*******************************************************************************************************************************************************/
 void student::edit()
 {
 	system("CLS");
@@ -318,9 +350,13 @@ void student::edit()
 	
 	writeData();
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// DISPLAYING / SEARCHING
+/*******************************************************************************************************************************************************/
 void displayByName( string name[] )
 {
 	int rollnum1;
@@ -344,7 +380,6 @@ void displayByName( string name[] )
 					{
 						if(name[0]==nametemp[0] && name[1]==nametemp[1])
 						{
-							//readData();
 							stud[i].displayByRoll();
 						} else
 						{
@@ -364,46 +399,47 @@ void displayByName( string name[] )
 
 void student::displayByRoll()
 {
-	loop:
-	readData();
-	//Name
-	cout<<"Name\t\t\t"<<name[0]<<" "<<name[1]<<endl<<endl;
-	//Date of birth
-	cout<<"Date of birth\t\t";
-	cout<<dateOfBirth[0]<<" - "<<dateOfBirth[1]<<" - "<<dateOfBirth[2]<<endl<<endl;
-	//Age
-	cout<<"Age\t\t\t"<<age<<endl<<endl;
-	//Address
-	cout<<"Address:"<<endl;
-	cout<<"House "<<address[3]<<", "<<"Street "<<address[2]<<
-	", "<<address[1]<<" Colony"<<", "<<address[0]<<endl<<endl;
-	for ( int temp2=0; temp2<coursenum; temp2++ )
+	bool check = readData();
+	if ( check == true )
 	{
-		cout<<"Grade in "<<course[temp2]<<" is "<<grade[temp2]<<endl;
-	}
+		cout<<"Name\t\t\t"<<name[0]<<" "<<name[1]<<endl<<endl;
+		cout<<"Date of birth\t\t";
+		cout<<dateOfBirth[0]<<" - "<<dateOfBirth[1]<<" - "<<dateOfBirth[2]<<endl<<endl;
+		cout<<"Age\t\t\t"<<age<<endl<<endl;
+		cout<<"Address:"<<endl;
+		cout<<"House "<<address[3]<<", "<<"Street "<<address[2]<<
+		", "<<address[1]<<" Colony"<<", "<<address[0]<<endl<<endl;
+		for ( int temp2=0; temp2<coursenum; temp2++ )
+		{
+			cout<<"Grade in "<<course[temp2]<<" is "<<grade[temp2]<<endl;
+		}
 	
-	
-	cout<<endl<<endl<<"Enter 1 to Edit or 2 to Delete this file. Enter 3 to go back."<<endl<<endl;
-	int menu; cin>>menu;
-	switch (menu)
-	{
-	case 1:
-		cout<<endl;
-		edit();
-		writeData();
-		cout<<"New data:"<<endl<<endl; goto loop;
-		break;
-	case 2:
-		removeit();
-		cout<<endl<<endl;
-		break;
-	case 3:
-		break;
+		cout<<endl<<endl<<"Enter 1 to Edit or 2 to Delete this file. Enter 3 to go back."<<endl<<endl;
+		int menu; cin>>menu;
+		switch (menu)
+		{
+		case 1:
+			cout<<endl;
+			edit();
+			writeData();
+			cout<<"New data:"<<endl<<endl; stud[rollnum].displayByRoll();
+			break;
+		case 2:
+			removeit();
+			cout<<endl<<endl;
+			break;
+		case 3:
+			break;
+		}
 	}
 }
+/*******************************************************************************************************************************************************/
 
 
 
+
+// DELETING FILES
+/*******************************************************************************************************************************************************/
 void student::removeit()
 {
 	string rollnumber;
