@@ -1,3 +1,5 @@
+Student Management System
+
 Object-Oriented Programming, semester project.
 The code has the same primary purpose as my previous (CP Project) Student Management System.
 
