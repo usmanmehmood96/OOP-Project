@@ -6,6 +6,10 @@
 
 using namespace std;
 
+
+
+
+/*******************************************************************************************************************************************************/
 class student
 {
 private:
@@ -21,12 +25,15 @@ public:
 	void displayByRoll	();
 	void edit			();
 	void setName		();
+	void setRoll		( int r );
 	void setDateOfBirth	();
 	void setAddress		();
 	void setCourses		();
 	void removeit 		();
 	
 } stud[500];
+/*******************************************************************************************************************************************************/
+
 
 
 
@@ -40,21 +47,24 @@ void displayByName ( string name[] );
 /*******************************************************************************************************************************************************/
 int main()
 {
-	cout<<"Welcome to Student Management System."<<endl;
-	MENU:	//This is the menu label, the goto statement redirects here.
-	menu();
-	cout<<"Press 1 to go to Menu, press 2 to Exit."<<endl;
-	int temp; cin>>temp;
-	switch (temp)
+	cout<<"**************************************"<<endl;
+	cout<<" Welcome to Student Management System"<<endl;
+	cout<<"**************************************"<<endl;
+	cout<<endl;
+	while (1)
 	{
-	case 1:
-		goto MENU;	//This will redirect to "MENU" label.
-		break;
-	case 2:
-		break;
+		cout<<"Press 1 to go to Menu, press 2 to Exit."<<endl;
+		int temp; cin>>temp;
+		switch (temp)
+		{
+			case 1:
+				menu();
+				break;
+			case 2:
+				cout<<"Exiting.";
+				return 0;
+		}
 	}
-	cout<<"Exiting.";
-	return 0;
 }
 /*******************************************************************************************************************************************************/
 
@@ -92,6 +102,7 @@ void menu()
 		{
 			int rollnum;
 			cout<<endl<<"Enter roll number:\t"; cin>>rollnum;
+			stud[rollnum].setRoll( rollnum );
 			stud[rollnum].displayByRoll ();
 		}
 	break;
@@ -143,26 +154,28 @@ void student::writeData()
 	system("CLS");
 	cout<<"Making a file for roll number "<<rollnum<<endl;;
 
-	// Important to create .txt file.
-	string rolli;
+	// Converting int to string.
+	string rollString;
 	stringstream convert;
 	convert << rollnum;
-	rolli = convert.str();
-    rolli += ".txt"; 
+	rollString = convert.str();
+	
+	// Adding ".txt" to the string.
+    rollString += ".txt"; 
     
-	// Making a file and writing to it.
-	ofstream database;
-    database.open(rolli.c_str());
+	// Making a file
+	ofstream file;
+    file.open(rollString.c_str());
 
-	int temp2;
-	database <<name[0]<<endl<<name[1]<<endl<<dateOfBirth[0]<<endl<<dateOfBirth[1];
-	database <<endl<<dateOfBirth[2]<<endl<<age<<endl<<address[0]<<endl<<address[1];
-	database <<endl<<address[2]<<endl<<address[3]<<endl<<coursenum<<endl;
-	for (temp2=0; temp2<coursenum; temp2++)
+	// Writing in the file.
+	file <<name[0]<<endl<<name[1]<<endl<<dateOfBirth[0]<<endl<<dateOfBirth[1];
+	file <<endl<<dateOfBirth[2]<<endl<<age<<endl<<address[0]<<endl<<address[1];
+	file <<endl<<address[2]<<endl<<address[3]<<endl<<coursenum<<endl;
+	for (int i=0; i<coursenum; i++)
 	{
-		database <<course[temp2]<<endl<<grade[temp2]<<endl;
+		file <<course[i] <<endl <<grade[i] <<endl;
 	}
-	database.close();
+	file.close();
 
 	cout<<"File created."<<endl<<endl<<endl;
 }
@@ -174,22 +187,28 @@ bool student::readData()
 	system("CLS");
 	cout<<"Reading file of roll number:\t"<<rollnum<<endl<<endl;
 	
+	// Converting int to string.
 	string rollnumber;
 	stringstream convert;
 	convert << rollnum;
 	rollnumber = convert.str();
+	
+	// Adding ".txt" to the file.
 	rollnumber += ".txt";
-	ifstream database ( rollnumber.c_str() );
-	if (database)
-	{
-		while( database>>name[0]>>name[1]>>dateOfBirth[0]>>dateOfBirth[1]>>dateOfBirth[2]>>
-				age>>address[0]>>address[1]>>address[2]>>address[3]>>coursenum
-				>>course[0]>>grade[0]>>course[1]>>grade[1]
-				>>course[2]>>grade[2]>>course[3]>>grade[3]
-				>>course[4]>>grade[4]>>course[5]>>grade[5]
-				>>course[6]>>grade[6]>>course[7]>>grade[7]
-				>>course[8]>>grade[8]>>course[9]>>grade[9] )
-		database.close();
+	
+	// Reading from the file.
+	ifstream file ( rollnumber.c_str() );
+	if (file)
+	{	
+		file>>name[0]>>name[1]>>dateOfBirth[0]>>dateOfBirth[1]>>dateOfBirth[2]
+			>>age>>address[0]>>address[1]>>address[2]>>address[3]>>coursenum;
+			
+		for (int i=0; i<coursenum; i++)
+		{
+			file>>course[i]>>grade[i];
+		}
+
+		file.close();
 		cout<<endl<<endl;
 		return true;
 	} else
@@ -205,9 +224,13 @@ bool student::readData()
 
 // SET-VALUE FUNCTIONS
 /*******************************************************************************************************************************************************/
+void student::setRoll ( int r )
+{
+	rollnum = r;
+}
+
 void student::setName()
 {
-	
 	string n [2];
 	cout<<endl<<"Name"<<endl<<endl;
 	cout<<"First name:\t";	cin>>n [0];
@@ -361,19 +384,19 @@ void displayByName( string name[] )
 {
 	int rollnum1;
 	string nametemp[2];
-	ifstream database ("roll.txt");
-	if (database)
+	ifstream file ("roll.txt");
+	if (file)
 	{
-		while (database>>rollnum1)
+		while (file>>rollnum1)
 		{
 			for (int i=1; i<=rollnum1; i++)
 			{
-				string rolli;
+				string rollString;
 				stringstream convert;
 				convert << i;
-				rolli = convert.str();
-			    rolli += ".txt"; // important to create .txt file.
-				ifstream nameo (rolli.c_str());
+				rollString = convert.str();
+			    rollString += ".txt"; // important to create .txt file.
+				ifstream nameo (rollString.c_str());
 				if (nameo)
 				{
 					while (nameo>>nametemp[0]>>nametemp[1])
@@ -447,14 +470,14 @@ void student::removeit()
 	convert << rollnum;
 	rollnumber = convert.str();
 	rollnumber += ".txt";
-	ifstream database ( rollnumber.c_str() );
+	ifstream file ( rollnumber.c_str() );
 
 	
 	string name[2];
-	if (database)
+	if (file)
 	{
-		while( database>>name[0]>>name[1] )
-		database.close();
+		while( file>>name[0]>>name[1] )
+		file.close();
 		cout<<endl<<"Do you wish to delete the file of "<<name[0]<<" "<<name[1]<<"? (Y/N)"<<endl;
 		char temp; cin>>temp;
 		if (temp=='y'||temp=='Y')
