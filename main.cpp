@@ -40,6 +40,7 @@ public:
 void menu();
 void roll();
 void displayByName ( string name[] );
+void displayAll();
 
 
 
@@ -50,6 +51,7 @@ int main()
 	cout<<"**************************************"<<endl;
 	cout<<" Welcome to Student Management System"<<endl;
 	cout<<"**************************************"<<endl;
+	//cout<<"Test 2"<<endl;
 	cout<<endl;
 	while (1)
 	{
@@ -77,7 +79,7 @@ void menu()
 {
 	//Main menu.
 	system("CLS");
-	cout<<"Please enter:\n1 To Add a student.\n2 To Display/Search a student's data."<<endl;
+	cout<<"Please enter:\n 1 To Add a student.\n 2 To Display/Search a student's data. \n 3 To Display names of all students."<<endl;
 	int menu; cin>>menu;
 	switch (menu)
 	{
@@ -105,7 +107,10 @@ void menu()
 			stud[rollnum].setRoll( rollnum );
 			stud[rollnum].displayByRoll ();
 		}
-	break;
+		break;
+	case 3:
+		displayAll();
+		break;
 	}
 }
 /*******************************************************************************************************************************************************/
@@ -119,25 +124,25 @@ void roll()
 {
 	int rollnumber;
 	ifstream roll("roll.txt");
-	if (roll)
+	if (roll)								// If roll.txt already exists.
 	{
-		ifstream roll ("roll.txt");
-		while( roll>>rollnumber )
+		ifstream roll ("roll.txt");			// Open the file.
+		while( roll>>rollnumber )			// Read roll number.
 		{
-			rollnumber++;
+			rollnumber++;					// Increase roll number.
 			ofstream roll;
 			roll.open ("roll.txt");
-			roll<<rollnumber;
+			roll<<rollnumber;				// Write it back in the file.
 		}
 		roll.close();
 		stud[ rollnumber ].add( rollnumber );
 
-	} else
+	} else									// If roll.txt does not exist.
 	{
-		ofstream roll;
-		roll.open ("roll.txt");
+		ofstream roll;						// Create a file named roll.txt.
+		roll.open ("roll.txt");				// Open the file.
 		rollnumber=1;
-		roll << rollnumber;
+		roll << rollnumber;					// Write the roll number '1'.
 		roll.close();
 		stud[ rollnumber ].add( rollnumber );
 	}
@@ -231,11 +236,11 @@ void student::setRoll ( int r )
 
 void student::setName()
 {
-	string n [2];
+	string n[2];
 	cout<<endl<<"Name"<<endl<<endl;
 	cout<<"First name:\t";	cin>>n [0];
 	cout<<"Last name:\t";	cin>>n [1];
-	
+		
 	name[0] = n [0]; name[1] = n [1];
 	cout<<endl;
 }
@@ -455,6 +460,44 @@ void student::displayByRoll()
 			break;
 		}
 	}
+}
+
+
+
+void displayAll()
+{
+	system("CLS");
+	cout<<endl<<"All Students."<<endl<<endl;
+	cout<<"Roll\tName"<<endl<<endl;
+	int rollnum1; string nametemp[2];
+	ifstream file ("roll.txt");
+	if (file)
+	{
+		while (file>>rollnum1)
+		{
+			for (int i=1; i<=rollnum1; i++)
+			{
+				string rollString;
+				stringstream convert;
+				convert << i;
+				rollString = convert.str();
+			    rollString += ".txt"; // important to create .txt file.
+				ifstream nameo (rollString.c_str());
+				if (nameo)
+				{
+					while (nameo>>nametemp[0]>>nametemp[1])
+					{
+						cout<<i<<"\t"<<nametemp[0]<<" "<<nametemp[1]<<endl;
+						nameo.close();
+					}
+				} else
+				{
+					cout<<i<<endl;
+				}
+			}
+		}
+	}
+	cout<<endl;
 }
 /*******************************************************************************************************************************************************/
 
