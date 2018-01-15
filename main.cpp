@@ -41,6 +41,7 @@ void menu();
 void roll();
 void displayByName ( string name[] );
 void displayAll();
+void avg ( string course, int newMarks ); int avg ( string course );
 
 
 
@@ -79,7 +80,7 @@ void menu()
 {
 	//Main menu.
 	system("CLS");
-	cout<<"Please enter:\n 1 To Add a student.\n 2 To Display/Search a student's data. \n 3 To Display names of all students."<<endl;
+	cout<<"Please enter:\n 1 To Add a student.\n 2 To Display/Search a student's data. \n 3 To Display names of all students. \n 4 Average stuff."<<endl;
 	int menu; cin>>menu;
 	switch (menu)
 	{
@@ -110,6 +111,10 @@ void menu()
 		break;
 	case 3:
 		displayAll();
+		break;
+	case 4:
+		cout<<"Enter Subject Name"<<endl; string subject; cin>>subject;
+		cout<<"Average is: "<< avg ( subject ) <<endl;
 		break;
 	}
 }
@@ -227,6 +232,67 @@ bool student::readData()
 
 
 
+/*******************************************************************************************************************************************************/
+
+void avg ( string course, int newMarks )
+{
+	int totalMarks, rollnumber = 0;
+	course += ".txt";
+	
+	ifstream courseFile( course.c_str() );
+	if ( courseFile )										// If *subject* .txt already exists.
+	{
+		ifstream courseFile (course.c_str());				// Open the file.
+		while( courseFile >> rollnumber >> totalMarks )		// Read roll number and marks.
+		{
+			totalMarks = totalMarks + newMarks;				// Marks
+			rollnumber++;									// Increase roll number.
+			
+			ofstream courseFile;
+			courseFile.open ( course.c_str() );
+			courseFile << rollnumber <<endl<< totalMarks;			// Write it back in the file.
+		}
+		courseFile.close();
+		
+	} else													// If roll.txt does not exist.
+	{
+		ofstream courseFile;								// Create a file named *subject* .txt.
+		courseFile.open ( course.c_str() );					// Open the file.
+		
+		totalMarks = newMarks;
+		rollnumber++;
+		
+		courseFile << rollnumber <<endl<< totalMarks;				// Write the roll number '1'.
+		courseFile.close();
+	}
+}
+
+int avg ( string course )
+{
+	int totalMarks=0, rollnumber=0;
+	course += ".txt";
+	
+	ifstream courseFile( course.c_str() );
+	if ( courseFile )										// If *subject* .txt already exists.
+	{
+		ifstream courseFile (course.c_str());				// Open the file.
+		
+		courseFile >> rollnumber >> totalMarks;
+		
+		courseFile.close();
+		
+		return totalMarks/rollnumber;
+		
+	} else													// If roll.txt does not exist.
+	{
+		cout<<"Subject file not found."<<endl;
+	}
+}
+/*******************************************************************************************************************************************************/
+
+
+
+
 // SET-VALUE FUNCTIONS
 /*******************************************************************************************************************************************************/
 void student::setRoll ( int r )
@@ -236,7 +302,10 @@ void student::setRoll ( int r )
 
 void student::setName()
 {
-	string n[2];
+	string n [2];
+	
+	LOOP:
+
 	cout<<endl<<"Name"<<endl<<endl;
 	cout<<"First name:\t";	cin>>n [0];
 	cout<<"Last name:\t";	cin>>n [1];
@@ -306,6 +375,8 @@ void student::setCourses()
 			{
 				grade [temp1] = 'F';
 			}
+			
+			avg ( cours[temp1] , marks[temp1] );
 		}
 	}  else
 	{
